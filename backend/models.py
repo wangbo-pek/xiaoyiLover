@@ -7,8 +7,8 @@ class Article(models.Model):
     title = models.CharField(max_length=256)
     subtitle = models.CharField(max_length=1024)
     is_display = models.CharField(max_length=2, choices=((0, 'hidden'), (1, 'display')))
-    content_text = models.TextField()
-    content_html = models.TextField()
+    updated_date = models.DateTimeField()
+    created_date = models.DateTimeField(auto_now_add=True)
 
     # 文章 1:1 文章信息
     article_info = models.OneToOneField(to='Article_Info', on_delete=models.CASCADE)
@@ -24,12 +24,12 @@ class Article(models.Model):
 # 文章信息
 class Article_Info(models.Model):
     article_info_id = models.AutoField(primary_key=True)
+    content_text = models.TextField()
+    content_html = models.TextField()
     read_count = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
     like_count = models.IntegerField(default=0)
     reprinted_count = models.IntegerField(default=0)
-    updated_date = models.DateTimeField()
-    created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.article_info_id}|{self.article}'
@@ -53,14 +53,8 @@ class Diary(models.Model):
 
 # 文章分类
 class Category(models.Model):
-    CATEGORY = (
-        ('1', 'coding'),
-        ('2', 'product'),
-        ('3', 'english'),
-    )
     category_id = models.AutoField(primary_key=True)
-    category_name = models.CharField(max_length=2, choices=CATEGORY)
-    created_date = models.DateTimeField(auto_now_add=True)
+    category_name = models.CharField(max_length=64)
 
     def __str__(self):
         return f'{self.category_id}|{self.category_name}'
@@ -70,7 +64,6 @@ class Category(models.Model):
 class Sub_Category(models.Model):
     sub_category_id = models.AutoField(primary_key=True)
     sub_category_name = models.CharField(max_length=32)
-    created_date = models.DateTimeField(auto_now_add=True)
     # 1级分类 1:n 2级分类
     category = models.ForeignKey(to='Category', to_field='category_id', on_delete=models.CASCADE)
 

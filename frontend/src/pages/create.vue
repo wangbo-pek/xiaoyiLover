@@ -8,11 +8,12 @@ import {MdEditor} from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import useArticlesStore from "@/store/articles.js";
 import {useRouter} from "vue-router";
-import {createArticle} from '@/api/post_articles.js'
+import {createArticle} from '@/api/articlesAPI.js'
 import showdown from 'showdown'
 
 const $router = useRouter()
 let articleStore = useArticlesStore()
+let articlesStore = useArticlesStore()
 
 let newArticle = reactive({
     title: '',
@@ -70,12 +71,10 @@ function create() {
     const converter = new showdown.Converter()
     newArticle.content_html = converter.makeHtml(newArticle.content_text)
     console.log(typeof newArticle.content_html)
-    newArticle.content_html = newArticle.content_html.replace(/(<([^>]+)>)/g, '').replace(/\n/g, ' ')
-    console.log(newArticle.content_html)
     createArticle(newArticle)
 
     $router.push({
-        name:'articles'
+        name: 'articles'
     })
 }
 
@@ -155,10 +154,10 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='coding'">
+                <template v-else-if="newArticle.levelFirstCategory==='Coding'">
                     <q-select
                         v-model="newArticle.levelSecondCategory"
-                        :options="articleStore.subcategoryObject['coding']"
+                        :options="articleStore.subcategoryObject['Coding']"
                         label="subcategory"
                         color="teal-5"
                         use-input
@@ -167,10 +166,10 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='english'">
+                <template v-else-if="newArticle.levelFirstCategory==='English'">
                     <q-select
                         v-model="newArticle.levelSecondCategory"
-                        :options="articleStore.subcategoryObject['english']"
+                        :options="articleStore.subcategoryObject['English']"
                         label="subcategory"
                         color="teal-5"
                         use-input
@@ -179,10 +178,10 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='product'">
+                <template v-else-if="newArticle.levelFirstCategory==='Product'">
                     <q-select
                         v-model="newArticle.levelSecondCategory"
-                        :options="articleStore.subcategoryObject['product']"
+                        :options="articleStore.subcategoryObject['Product']"
                         label="subcategory"
                         color="teal-5"
                         use-input

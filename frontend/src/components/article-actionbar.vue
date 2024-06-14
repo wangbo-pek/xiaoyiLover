@@ -23,8 +23,8 @@ let e = ref(undefined)
                 class="c-btn"
                 size="15px"
                 label="Create"
-                color="teal-5"
                 text-color="black"
+                unelevated
                 :to="{name:'create'}"
 
             ></q-btn>
@@ -38,7 +38,6 @@ let e = ref(undefined)
                 label="Filter Category"
                 outlined
                 label-color="black"
-                bg-color="teal-5"
                 color="white"
                 dense
                 clearable
@@ -53,7 +52,6 @@ let e = ref(undefined)
                 label="Filter Tag"
                 standout
                 label-color="black"
-                bg-color="teal-5"
                 color="white"
                 dense
                 clearable
@@ -71,12 +69,14 @@ let e = ref(undefined)
     width: 75%;
     height: 70px;
     z-index: 98;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(250, 245, 250, 0.85), rgba(250, 250, 245, 0.8), rgba(255, 255, 255, 0.75));
+    background-color: white;
 
     .create-btn {
         position: fixed;
         top: 95px;
         left: 50px;
+        text-transform: none;
+        background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
 
     }
 
@@ -85,6 +85,7 @@ let e = ref(undefined)
         top: 95px;
         left: 170px;
         width: 300px;
+        background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
     }
 
     .tag-selection {
@@ -92,6 +93,7 @@ let e = ref(undefined)
         top: 95px;
         left: 500px;
         width: 300px;
+        background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
     }
 }
 </style>

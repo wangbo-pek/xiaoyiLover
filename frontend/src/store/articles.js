@@ -3,7 +3,11 @@ import {defineStore} from "pinia";
 let useArticlesStore = defineStore('useArticlesStore', {
     state() {
         return {
-            articleObject: {
+            // 文章列表数据
+            articlesList: [],
+
+            // 即将view、edit、delete的文章数据
+            currentArticle: {
                 article_id: -1,
                 title: 'No Data',
                 subtitle: 'No Data',
@@ -20,9 +24,13 @@ let useArticlesStore = defineStore('useArticlesStore', {
                 levelSecondCategory:'No Data',
                 tags: [],
             },
-            articlesList: [],
+
+            // 所有的文章1级分类
             categoryList:[],
+            // 所有的文章2级分类
             subcategoryObject:{},
+
+            // 所有的文章标签
             tagsList:[]
         }
     }

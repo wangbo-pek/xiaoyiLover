@@ -1,7 +1,7 @@
 <script setup>
 import ArticleActionBar from "@/components/article-actionbar.vue";
 import ArticleList from "@/components/article-list.vue";
-import {getAllArticles} from "@/api/get_articles.js";
+import {getArticlesList} from "@/api/articlesAPI.js";
 import {onMounted} from "vue";
 
 defineOptions({
@@ -9,7 +9,7 @@ defineOptions({
 })
 
 onMounted(() => {
-    getAllArticles()
+    getArticlesList()
 })
 
 </script>
@@ -42,7 +42,9 @@ onMounted(() => {
         top: calc($header-high + $actionbar-high);
         left: 0;
         width: 75%;
+        height: 100vh;
     }
+
 }
 
 

@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted} from "vue";
 import request from "@/utils/request.js";
-import {getAllCategory, getAllTag} from '@/api/get_articles.js'
+import {getAllCategory, getAllTag} from '@/api/articlesAPI.js'
 
 
 function getToken() {
