@@ -17,10 +17,10 @@ async function getAllArticles() {
                 content_text: value.content_text,
                 content_html: value.content_html,
                 short_content: function () {
-                    if (value.content_text.length < 200) {
-                        return value.content_text
+                    if (value.content_html.length < 200) {
+                        return value.content_html
                     } else {
-                        return `${value.content_text.substring(0, 201)} ...`
+                        return `${value.content_html.substring(0, 201)} ...`
                     }
                 }(),
                 read_count: value.read_count,
@@ -49,10 +49,14 @@ async function getAllCategory() {
         console.log(response)
         articlesStore.categoryList = response.category_data
         articlesStore.subcategoryObject = response.subcategory_data
-        console.log(articlesStore.categoryList)
-        console.log(articlesStore.subcategoryObject)
     })
 }
 
-
-export {getAllArticles, getAllCategory}
+async function getAllTag() {
+    await request.get('/get_all_tag/').then(response=>{
+        console.log('@@getAllTag')
+        console.log(response)
+        articlesStore.tagsList = response.tag_data
+    })
+}
+export {getAllArticles, getAllCategory, getAllTag}

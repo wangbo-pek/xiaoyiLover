@@ -22,7 +22,8 @@ let useArticlesStore = defineStore('useArticlesStore', {
             },
             articlesList: [],
             categoryList:[],
-            subcategoryObject:{}
+            subcategoryObject:{},
+            tagsList:[]
         }
     }
 })

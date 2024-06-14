@@ -21,6 +21,7 @@
   "devDependencies": {
     "@quasar/vite-plugin": "^1.7.0",
     "@vitejs/plugin-vue": "^5.0.4",
+    "showdown": "^2.1.0",
     "vite": "^5.2.8"
   }
 }

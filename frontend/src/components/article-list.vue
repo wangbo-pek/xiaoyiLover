@@ -7,6 +7,7 @@ import useArticlesStore from "../store/articles.js";
 
 let articlesStore = useArticlesStore()
 
+
 </script>
 
 <template>
@@ -16,12 +17,13 @@ let articlesStore = useArticlesStore()
 
                 <q-card-section>
                     <div class="article-category">
-                        <span class="article-l1-category">{{ article.levelFirstCategory }}</span>
-                        /
-                        <span class="article-l2-category">{{ article.levelSecondCategory }}</span>
                     </div>
                     <div class="article-title">{{ article.title }}</div>
-                    <div class="article-short-content">{{ article.short_content }}</div>
+
+                    <span class="article-l1-category">{{ article.levelFirstCategory }}/</span>
+
+                    <span class="article-l2-category">{{ article.levelSecondCategory }}</span>
+
                     <span class="article-updated-date">{{ article.updated_date }}</span>
 
                     <template v-for="(item, index) in article.tags" :key="index">
@@ -31,12 +33,12 @@ let articlesStore = useArticlesStore()
                 </q-card-section>
                 <q-separator/>
                 <q-card-actions>
-                    <q-btn class="action-btn view" size="12px" label="view"></q-btn>
-                    <q-btn class="action-btn edit" size="12px" label="edit"></q-btn>
-                    <q-btn class="action-btn delete" size="12px" label="delete"></q-btn>
-                    <q-btn class="action-btn like" round size="10px" icon="thumb_up"></q-btn>
-                    <q-btn class="action-btn comment" round size="10px" icon="textsms"></q-btn>
-                    <q-btn class="action-btn share" round size="10px" icon="share"></q-btn>
+                    <q-btn class="action-btn view" size="11px" label="view"></q-btn>
+                    <q-btn class="action-btn edit" size="11px" label="edit"></q-btn>
+                    <q-btn class="action-btn delete" size="11px" label="delete"></q-btn>
+                    <q-icon class="action-icon like" name="thumb_up" size="18px"/>
+                    <q-icon class="action-icon comment" name="textsms" size="18px"/>
+                    <q-icon class="action-icon share" name="share" size="18px"/>
                 </q-card-actions>
             </q-card>
         </template>
@@ -58,35 +60,30 @@ let articlesStore = useArticlesStore()
             margin: 0 40px 10px 0;
 
             .article-l1-category {
-                font-size: 17px;
+                font-size: 16px;
                 font-weight: 600;
             }
 
             .article-l2-category {
-                font-size: 13px;
+                font-size: 14px;
                 font-weight: 400;
             }
         }
 
         .article-title {
-            font-size: 26px;
+            font-size: 20px;
             font-weight: 800;
         }
 
-        .article-short-content {
-            font-size: 18px;
-            font-weight: 400;
-            margin: 0 0 10px 0;
-        }
-
         .article-updated-date {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 300;
             margin-right: 20px;
+            margin-left: 20px;
         }
 
         .article-tags {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 400;
             margin-right: 10px;
         }
@@ -107,24 +104,27 @@ let articlesStore = useArticlesStore()
 
         .delete {
             color: whitesmoke;
-            background-color: #c43939;
+            background-color: #b94f4f;
         }
 
         .like {
-            color: teal;
+            color: #4db6ac;
+            margin: 0 15px 0 25px;
         }
 
         .comment {
-            color: teal;
+            color: #4db6ac;
+            margin: 0 15px 0 10px;
         }
 
         .share {
-            color: teal;
+            color: #4db6ac;
+            margin: 0 15px 0 10px;
         }
     }
 }
 
-.ph{
+.ph {
     width: 100px;
     height: 50px;
 }

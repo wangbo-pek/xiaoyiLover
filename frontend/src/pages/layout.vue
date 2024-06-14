@@ -27,7 +27,6 @@ defineOptions({
             </div>
         </div>
 
-
         <div class="column placeholder"></div>
 
         <div class="column middle">
@@ -54,31 +53,34 @@ defineOptions({
 
         .title {
             position: fixed;
-            top:0;
-            left:0;
+            top: 0;
+            left: 0;
             z-index: 99;
+            background-image: linear-gradient(to right, rgba(90, 215, 215, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 205, 0.84));
         }
 
         .menu {
             position: fixed;
-            top:0;
-            left:25%;
+            top: 0;
+            left: 25%;
             z-index: 99;
+            background-image: linear-gradient(to right, rgba(96, 225, 205, 0.81), rgba(98, 230, 200, 0.79), rgba(100, 235, 195, 0.76));
         }
 
         .action {
             position: fixed;
-            top:0;
-            left:75%;
+            top: 0;
+            left: 75%;
             z-index: 99;
+           background-image: linear-gradient(to right, rgba(102, 235, 195, 0.73), rgba(104, 240, 190, 0.7), rgba(106, 245, 185, 0.67));
         }
     }
 
     .placeholder {
         height: $header-high;
         position: fixed;
-            top:0;
-            left:0;
+        top: 0;
+        left: 0;
     }
 
     .middle {
@@ -90,6 +92,9 @@ defineOptions({
         }
 
         .sidebar {
+            position: fixed;
+            top: $header-high;
+            right: 0;
             background-color: #a57fb2;
         }
 
@@ -99,7 +104,7 @@ defineOptions({
 
     .footer {
         height: $footbar-high;
-        background-color: #7be7ef;
+        background-image: linear-gradient(to right, rgba(1, 201, 201, 0.8), rgba(1, 201, 178, 0.8), rgba(1, 201, 201, 0.8));
     }
 }
 

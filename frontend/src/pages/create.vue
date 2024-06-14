@@ -3,31 +3,80 @@ defineOptions({
     name: 'CreateArticle'
 })
 
-import {reactive} from 'vue'
+import {reactive, watch} from 'vue'
 import {MdEditor} from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import useArticlesStore from "@/store/articles.js";
 import {useRouter} from "vue-router";
+import {createArticle} from '@/api/post_articles.js'
+import showdown from 'showdown'
 
 const $router = useRouter()
+let articleStore = useArticlesStore()
 
 let newArticle = reactive({
     title: '',
     subtitle: '',
-    is_display: '0',
+    is_display: '1',
     content_text: '',
     content_html: '',
     levelFirstCategory: '',
     levelSecondCategory: '',
-    tags: [],
+    selectedTag: [],
+    newAddedTag: []
 })
 
-//
-let articleStore = useArticlesStore()
-
-
-function resetSecondCategory() {
+// category、subcategory的处理
+function resetSelectedSecondCategory() {
     newArticle.levelSecondCategory = ''
+}
+
+// tag的处理
+// watch监听已选择标签列表的值是否发生了变化
+watch(() => newArticle.selectedTag, (newValue, oldValue) => {
+    // 判断已选择标签列表中，到底是新增了标签，还是删除了标签
+    if (newValue.length > oldValue.length) {  // 新增标签
+        let newAddedTag = newValue.filter(function (v) {
+            return oldValue.indexOf(v) === -1
+        })[0]
+        // 判断新增的标签changedTag是否已经存在
+        if (!articleStore.tagsList.includes(newAddedTag)) {
+            console.log('!!!')
+            articleStore.tagsList.push(newAddedTag)
+            newArticle.newAddedTag.push(newAddedTag)
+            // newArticle.selectedTag.push(changedTag)
+        }
+    } else if (newValue.length < oldValue.length) {  // 删除标签
+        let newEliminatedTag = oldValue.filter(function (v) {
+            return newValue.indexOf(v) === -1
+        })[0]
+        // 判断删除的标签changedTag是否是在此次创建文章时所新创建的标签
+        if (newArticle.newAddedTag.includes(newEliminatedTag)) {
+            console.log('????')
+            articleStore.tagsList = articleStore.tagsList.filter(item => item !== newEliminatedTag)
+            newArticle.newAddedTag = newArticle.newAddedTag.filter(item => item !== newEliminatedTag)
+        }
+    }
+})
+
+function createTag(val, done) {
+    val = '#' + val
+    done(val)
+}
+
+
+// 保存新创建的文章
+function create() {
+    const converter = new showdown.Converter()
+    newArticle.content_html = converter.makeHtml(newArticle.content_text)
+    console.log(typeof newArticle.content_html)
+    newArticle.content_html = newArticle.content_html.replace(/(<([^>]+)>)/g, '').replace(/\n/g, ' ')
+    console.log(newArticle.content_html)
+    createArticle(newArticle)
+
+    $router.push({
+        name:'articles'
+    })
 }
 
 </script>
@@ -54,7 +103,7 @@ function resetSecondCategory() {
                     label="save"
                     color="teal-5"
                     text-color="black"
-
+                    @click="create"
                 ></q-btn>
             </div>
 
@@ -75,7 +124,7 @@ function resetSecondCategory() {
                     label="category"
                     color="teal-5"
                     outlined
-                    @update:model-value="resetSecondCategory"
+                    @update:model-value="resetSelectedSecondCategory"
                     dense
                 ></q-select>
             </div>
@@ -147,17 +196,22 @@ function resetSecondCategory() {
 
         <div class="display-tag">
             <div class="display-radio">
-                <q-radio v-model="newArticle.is_display" val="0" label="display" color="teal-5"></q-radio>
-                <q-radio v-model="newArticle.is_display" val="1" label="hidden" color="teal-5"></q-radio>
-
+                <q-radio v-model="newArticle.is_display" val="1" label="display" color="teal-5"></q-radio>
+                <q-radio v-model="newArticle.is_display" val="0" label="hidden" color="teal-5"></q-radio>
             </div>
 
             <div class="tag-select">
                 <q-select
-                    model-value=""
+                    v-model="newArticle.selectedTag"
+                    :options="articleStore.tagsList"
                     label="tag"
                     color="teal-5"
                     outlined
+                    multiple
+                    clearable
+                    use-chips
+                    use-input
+                    @new-value="createTag"
                     dense
                 ></q-select>
 
@@ -165,7 +219,7 @@ function resetSecondCategory() {
         </div>
 
         <div class="md-area">
-            <MdEditor></MdEditor>
+            <MdEditor v-model="newArticle.content_text"></MdEditor>
         </div>
     </div>
 </template>
@@ -182,7 +236,7 @@ function resetSecondCategory() {
             position: fixed;
             top: 30px;
             left: 50px;
-            font-family: Courier,serif;
+            font-family: Courier, serif;
             margin-right: 50px;
         }
 

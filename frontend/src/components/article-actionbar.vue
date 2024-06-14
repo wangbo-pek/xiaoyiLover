@@ -65,28 +65,33 @@ let e = ref(undefined)
 
 <style scoped lang="scss">
 .actionbar-container {
+    position: fixed;
+    top: $header-high;
+    left: 0;
+    width: 75%;
+    height: 70px;
+    z-index: 98;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(250, 245, 250, 0.85), rgba(250, 250, 245, 0.8), rgba(255, 255, 255, 0.75));
 
     .create-btn {
-        position: absolute;
-        top: 15px;
+        position: fixed;
+        top: 95px;
         left: 50px;
-        font-family: "Courier New",serif;
+
     }
 
-    .category-selection{
-        position: absolute;
-        top: 15px;
+    .category-selection {
+        position: fixed;
+        top: 95px;
         left: 170px;
         width: 300px;
-        font-family: "Courier New",serif;
     }
 
-    .tag-selection{
-        position: absolute;
-        top: 15px;
+    .tag-selection {
+        position: fixed;
+        top: 95px;
         left: 500px;
         width: 300px;
-        font-family: "Courier New",serif;
     }
 }
 </style>

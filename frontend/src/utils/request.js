@@ -32,6 +32,14 @@ request.interceptors.request.use(
 request.interceptors.response.use(
     // 响应成功
     response => {
+        let message = response.data.message
+        Notify.create({
+            message: message,
+            icon: 'check_circle',
+            iconColor: 'grey-2',
+            type: 'positive',
+            timeout: 2000
+        })
         return response.data
     },
 
@@ -57,11 +65,11 @@ request.interceptors.response.use(
                 break
         }
         Notify.create({
-            message:message,
-            icon:'error',
-            iconColor:'grey-2',
-            type:'negative',
-            timeout:3000
+            message: message,
+            icon: 'error',
+            iconColor: 'grey-2',
+            type: 'negative',
+            timeout: 2000
         })
 
         return Promise.reject(error)

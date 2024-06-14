@@ -9,6 +9,7 @@ import 'quasar/src/css/index.sass'
 import router from "@/router/index.js";
 import pinia from "@/store/index.js";
 
+
 const app = createApp(App)
 
 app.use(Quasar, {
