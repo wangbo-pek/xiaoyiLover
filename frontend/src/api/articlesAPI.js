@@ -5,9 +5,9 @@ import pinia from "@/store/index.js";
 let articlesStore = useArticlesStore(pinia)
 
 // 获取所有文章列表信息
-function getArticlesList() {
+async function getArticlesList() {
     articlesStore.articlesList = []
-    request.get('get_article_list').then(response => {
+    await request.get('get_article_list').then(response => {
         console.log('@@getArticlesList')
         console.log(response.articlesList_data)
         response.articlesList_data.forEach(value => {

@@ -3,15 +3,12 @@ defineOptions({
     name: 'ArticleActionBar'
 })
 
-import {ref} from 'vue'
+import useArticlesStore from "@/store/articles.js";
 
-let d = [
-    '1',
-    '2',
-    '3'
-]
+let articlesStore = useArticlesStore()
 
-let e = ref(undefined)
+console.log(articlesStore.categoryList)
+console.log(articlesStore.subcategoryObject)
 
 </script>
 
@@ -30,19 +27,19 @@ let e = ref(undefined)
             ></q-btn>
         </div>
 
-        <div class="category-selection">
-            <q-select
-                class="c-selection"
-                v-model="e"
-                :options="d"
-                label="Filter Category"
-                outlined
-                label-color="black"
-                color="white"
-                dense
-                clearable
-            ></q-select>
-        </div>
+            <div class="category-selection">
+                <q-select
+                    class="c-selection"
+                    v-model="e"
+                    :options="op"
+                    label="Filter Category"
+                    outlined
+                    label-color="black"
+                    color="white"
+                    dense
+                    clearable
+                ></q-select>
+            </div>
 
         <div class="tag-selection">
             <q-select
