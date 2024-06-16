@@ -12,6 +12,7 @@
     "@quasar/extras": "^1.16.11",
     "axios": "^1.7.2",
     "mavon-editor": "^2.10.4",
+    "md-editor-v3": "^4.16.9",
     "pinia": "^2.1.7",
     "quasar": "^2.16.4",
     "sass": "^1.77.5",

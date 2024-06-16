@@ -126,8 +126,7 @@ def createArticle(request):
     newArticle.tag.add(*newAddedTage)
 
     # 将新创建的文章返回给前端
-
-    new = {
+    newCreatedArticle = {
         'article_id': newArticle.article_id,
         'title': newArticle.title,
         'subtitle': newArticle.subtitle,
@@ -140,10 +139,10 @@ def createArticle(request):
     }
 
     for tag in newArticle.tag.all():
-        new['tags'].append(tag.tag_name)
+        newCreatedArticle['tags'].append(tag.tag_name)
 
     response = {
-        'newArticle_data': new,
+        'newArticle_data': newCreatedArticle,
         'code': 1,
         'message': f'文章{newArticle.title}创建成功'
     }
@@ -155,7 +154,13 @@ def deleteArticle(request, articleId):
     toBeDeleteArticle = models.Article.objects.filter(article_id=articleId)[0]
     toBeDeleteArticle.tag.clear()
     toBeDeleteArticleTitle = toBeDeleteArticle.title
-    # 删除文章
+
+    # 获取到要删除的文章的model对象
+    toBeDeleteArticleObject = models.Article.objects.filter(article_id=articleId).first()
+
+    # 删除article_info
+    models.Article_Info.objects.filter(article_info_id=toBeDeleteArticleObject.article_info.article_info_id).delete()
+    # 删除article
     models.Article.objects.filter(article_id=articleId).delete()
     response = {
         'code': 1,
@@ -163,3 +168,98 @@ def deleteArticle(request, articleId):
     }
     return JsonResponse(response)
 
+
+def fetchArticle(request, articleId):
+    response = {}
+    articleObject = models.Article.objects.filter(article_id=articleId).first()
+    response['article_info'] = {
+        'content_text': articleObject.article_info.content_text,
+        'content_html': articleObject.article_info.content_html,
+        'read_count': articleObject.article_info.read_count,
+        'comment_count': articleObject.article_info.comment_count,
+        'like_count': articleObject.article_info.like_count,
+        'reprinted_count': articleObject.article_info.reprinted_count,
+    }
+    response['code'] = 1
+    response['message'] = f'获取文章{articleObject.title}成功'
+    return JsonResponse(response)
+    # return HttpResponse('1')
+
+
+def reviseArticle(request):
+    toBeReviseArticleData = json.loads(request.body)
+    print(toBeReviseArticleData)
+    tagsIdList = []
+
+    # 修改文章的标题、副标题、更新日期
+    models.Article.objects.filter(article_id=toBeReviseArticleData['article_id']).update(
+        title=toBeReviseArticleData['title'],
+        subtitle=toBeReviseArticleData['subtitle'],
+        is_display=toBeReviseArticleData['is_display'],
+        updated_date=datetime.datetime.now(),
+    )
+
+    # 获取到已经修改后文章的model对象
+    revisedArticleObject = models.Article.objects.filter(article_id=toBeReviseArticleData['article_id'])[0]
+    # 获取到修改后文章的sub_category的model对象
+    subcategoryObject = models.Sub_Category.objects.filter(
+        sub_category_name=toBeReviseArticleData['subcategory']).first()
+    # 修改sub_category
+    revisedArticleObject.sub_category_id = subcategoryObject.sub_category_id
+
+    # 修改文章的text和html
+    models.Article_Info.objects.filter(article_info_id=revisedArticleObject.article_info_id).update(
+        content_text=toBeReviseArticleData['content_text'],
+        content_html=toBeReviseArticleData['content_html']
+    )
+
+
+
+    # 判断修改的文章中是否有标签
+    if 'selectedTag' in toBeReviseArticleData:
+        # 将修改的文章与标签的关系删除
+        revisedArticleObject.tag.clear()
+
+        # 文章中有标签，并判断是否有新创建的标签
+        if 'newAddedTag' in toBeReviseArticleData:
+            # 文章中有标签，且包含了新创建的标签
+            # 将新创建的标签存储到数据库
+            for newTagName in toBeReviseArticleData['newAddedTag']:
+                models.Tag.objects.create(
+                    tag_name=newTagName,
+                    created_date=datetime.datetime.now()
+                )
+
+        # 将文章中的所有标签的id，保存在列表中(此时新标签已经存储到数据库中了)
+        for tagName in toBeReviseArticleData['selectedTag']:
+            tag = models.Tag.objects.filter(tag_name=tagName).first()
+            tagsIdList.append(tag.tag_id)
+
+    revisedArticleObject.tag.add(*tagsIdList)
+
+    # 将编辑修改后的文章返回给前端
+    revisedArticle = {
+        'article_id': revisedArticleObject.article_id,
+        'title': revisedArticleObject.title,
+        'subtitle': revisedArticleObject.subtitle,
+        'is_display': revisedArticleObject.is_display,
+        'updated_date': revisedArticleObject.updated_date,
+        'created_date': revisedArticleObject.created_date,
+        'subcategory': revisedArticleObject.sub_category.sub_category_name,
+        'category': revisedArticleObject.sub_category.category.category_name,
+        'content_text': revisedArticleObject.article_info.content_text,
+        'content_html': revisedArticleObject.article_info.content_html,
+        'tags': []
+    }
+
+    for tag in revisedArticleObject.tag.all():
+        revisedArticle['tags'].append(tag.tag_name)
+
+    response = {
+        'revisedArticle_data': revisedArticle,
+        'code': 1,
+        'message': f'文章{revisedArticleObject.title}修改成功'
+    }
+
+    return JsonResponse(response)
+    # return HttpResponse('1')

@@ -4,10 +4,12 @@ defineOptions({
 })
 
 import useArticlesStore from "../store/articles.js";
-import {deleteArticle} from '@/api/articlesAPI.js'
+import {deleteArticle, fetchArticle} from '@/api/articlesAPI.js'
 import {reactive} from "vue";
+import {useRouter} from "vue-router";
 
 let articlesStore = useArticlesStore()
+let $router = useRouter()
 
 // Quasar的dialog数据
 let dialog = reactive({
@@ -17,6 +19,7 @@ let dialog = reactive({
     listIndex:'',
 })
 
+
 // 删除指定文章，需要进行dialog提示
 function deleteSpecifiedArticle(articleId, listIndex, title) {
     dialog.message = `是否删除${title}，该操作无法撤销`
@@ -25,6 +28,22 @@ function deleteSpecifiedArticle(articleId, listIndex, title) {
     dialog.is_show = true
 }
 
+// 查看指定文章
+function previewSpecifiedArticle(articleId, index) {
+    console.log(articleId, index)
+    fetchArticle(articleId, index)
+    $router.push({
+        name:'preview'
+    })
+}
+
+// 编辑指定文章
+function reviseSpecifiedArticle(articleId, index) {
+    fetchArticle(articleId, index)
+    $router.push({
+        name:'revise'
+    })
+}
 
 </script>
 
@@ -55,13 +74,15 @@ function deleteSpecifiedArticle(articleId, listIndex, title) {
                         size="12px"
                         label="View"
                         color="teal-5"
+                        @click="previewSpecifiedArticle(item.article_id, index)"
                     ></q-btn>
                     <q-btn
                         class="action-btn edit"
                         unelevated
                         size="12px"
-                        label="Edit"
+                        label="Revise"
                         color="teal-5"
+                        @click="reviseSpecifiedArticle(item.article_id, index)"
                     ></q-btn>
                     <q-btn
                         class="action-btn delete"

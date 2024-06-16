@@ -20,10 +20,13 @@ let useArticlesStore = defineStore('useArticlesStore', {
                 reprinted_count: '-1',
                 updated_date: 'No Data',
                 created_date: 'No Data',
-                levelFirstCategory:'No Data',
-                levelSecondCategory:'No Data',
+                category:'No Data',
+                subcategory:'No Data',
                 tags: [],
             },
+
+            // 即将view、edit、delete的文章在store列表中的index
+            currentIndex:-1,
 
             // 所有的文章1级分类
             categoryList:[],

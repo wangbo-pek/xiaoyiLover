@@ -8,12 +8,11 @@ import {MdEditor} from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import useArticlesStore from "@/store/articles.js";
 import {useRouter} from "vue-router";
-import {createArticle} from '@/api/articlesAPI.js'
+import {createArticle, getArticlesList} from '@/api/articlesAPI.js'
 import showdown from 'showdown'
 
 const $router = useRouter()
 let articleStore = useArticlesStore()
-let articlesStore = useArticlesStore()
 
 let newArticle = reactive({
     title: '',
@@ -21,8 +20,8 @@ let newArticle = reactive({
     is_display: '1',
     content_text: '',
     content_html: '',
-    levelFirstCategory: '',
-    levelSecondCategory: '',
+    category: '',
+    subcategory: '',
     selectedTag: [],
     newAddedTag: []
 })
@@ -70,9 +69,7 @@ function createTag(val, done) {
 function create() {
     const converter = new showdown.Converter()
     newArticle.content_html = converter.makeHtml(newArticle.content_text)
-    console.log(typeof newArticle.content_html)
     createArticle(newArticle)
-
     $router.push({
         name: 'articles'
     })
@@ -88,7 +85,7 @@ function create() {
                 <q-btn
                     class="back-btn"
                     size="13px"
-                    label="back"
+                    label="Back"
                     color="teal-5"
                     text-color="black"
                     @click="$router.back()"
@@ -99,7 +96,7 @@ function create() {
                 <q-btn
                     class="save-btn"
                     size="13px"
-                    label="save"
+                    label="Save"
                     color="teal-5"
                     text-color="black"
                     @click="create"
@@ -118,7 +115,7 @@ function create() {
 
             <div class="category-select">
                 <q-select
-                    v-model="newArticle.levelFirstCategory"
+                    v-model="newArticle.category"
                     :options="articleStore.categoryList"
                     label="category"
                     color="teal-5"
@@ -141,9 +138,9 @@ function create() {
             </div>
 
             <div class="subcategory-select">
-                <template v-if="!newArticle.levelFirstCategory">
+                <template v-if="!newArticle.category">
                     <q-select
-                        v-model="newArticle.levelSecondCategory"
+                        v-model="newArticle.subcategory"
                         :options="[]"
                         label="subcategory"
                         color="teal-5"
@@ -154,9 +151,9 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='Coding'">
+                <template v-else-if="newArticle.category==='Coding'">
                     <q-select
-                        v-model="newArticle.levelSecondCategory"
+                        v-model="newArticle.subcategory"
                         :options="articleStore.subcategoryObject['Coding']"
                         label="subcategory"
                         color="teal-5"
@@ -166,9 +163,9 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='English'">
+                <template v-else-if="newArticle.category==='English'">
                     <q-select
-                        v-model="newArticle.levelSecondCategory"
+                        v-model="newArticle.subcategory"
                         :options="articleStore.subcategoryObject['English']"
                         label="subcategory"
                         color="teal-5"
@@ -178,9 +175,9 @@ function create() {
                         clearable
                     ></q-select>
                 </template>
-                <template v-else-if="newArticle.levelFirstCategory==='Product'">
+                <template v-else-if="newArticle.category==='Product'">
                     <q-select
-                        v-model="newArticle.levelSecondCategory"
+                        v-model="newArticle.subcategory"
                         :options="articleStore.subcategoryObject['Product']"
                         label="subcategory"
                         color="teal-5"
@@ -217,8 +214,11 @@ function create() {
             </div>
         </div>
 
-        <div class="md-area">
-            <MdEditor v-model="newArticle.content_text"></MdEditor>
+        <div class="editor">
+            <MdEditor
+                v-model="newArticle.content_text"
+                preview-theme="github"
+            ></MdEditor>
         </div>
     </div>
 </template>
@@ -235,7 +235,6 @@ function create() {
             position: fixed;
             top: 30px;
             left: 50px;
-            font-family: Courier, serif;
             margin-right: 50px;
         }
 
@@ -243,7 +242,6 @@ function create() {
             position: fixed;
             top: 30px;
             left: 150px;
-            font-family: Courier, serif;
         }
 
         .title-input {
@@ -251,7 +249,6 @@ function create() {
             top: 27px;
             left: 17%;
             width: 38%;
-            font-family: Courier, serif;
         }
 
         .category-select {
@@ -259,7 +256,6 @@ function create() {
             top: 27px;
             left: 58%;
             width: 38%;
-            font-family: Courier, serif;
         }
     }
 
@@ -303,7 +299,7 @@ function create() {
         }
     }
 
-    .md-area {
+    .editor {
         width: 92.7%;
         position: fixed;
         top: 230px;

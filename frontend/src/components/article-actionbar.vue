@@ -3,7 +3,7 @@ defineOptions({
     name: 'ArticleActionBar'
 })
 
-import {reactive, ref} from 'vue'
+import {ref} from 'vue'
 
 let d = [
     '1',
@@ -69,7 +69,7 @@ let e = ref(undefined)
     width: 75%;
     height: 70px;
     z-index: 98;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.75);
 
     .create-btn {
         position: fixed;

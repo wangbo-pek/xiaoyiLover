@@ -67,11 +67,72 @@ async function createArticle(newArticle) {
 }
 
 // 删除文章
-function deleteArticle(articleId, listIndex) {
-    request.get(`/delete_article/${articleId}`).then(response=>{
+async function deleteArticle(articleId, listIndex) {
+    await request.get(`/delete_article/${articleId}`).then(response => {
         console.log(response)
         articlesStore.articlesList.splice(listIndex, 1)
     })
 }
 
-export {getArticlesList, getAllCategory, getAllTag, createArticle, deleteArticle}
+// 获取指定文章的信息
+async function fetchArticle(articleId, index) {
+    articlesStore.currentIndex = index
+    console.log('index', index)
+    console.log('articlesStore.currentIndex', articlesStore.currentIndex)
+    await request.get(`/fetch_article/${articleId}/`).then(response => {
+        console.log('@@viewArticle')
+        console.log(response)
+        articlesStore.currentArticle.article_id = articlesStore.articlesList[index].article_id
+        articlesStore.currentArticle.title = articlesStore.articlesList[index].title
+        articlesStore.currentArticle.subtitle = articlesStore.articlesList[index].subtitle
+        articlesStore.currentArticle.is_display = articlesStore.articlesList[index].is_display
+        articlesStore.currentArticle.content_text = response.article_info.content_text
+        articlesStore.currentArticle.content_html = response.article_info.content_html
+        articlesStore.currentArticle.read_count = response.article_info.read_count
+        articlesStore.currentArticle.comment_count = response.article_info.comment_count
+        articlesStore.currentArticle.like_count = response.article_info.like_count
+        articlesStore.currentArticle.reprinted_count = response.article_info.reprinted_count
+        articlesStore.currentArticle.updated_date = articlesStore.articlesList[index].updated_date
+        articlesStore.currentArticle.created_date = articlesStore.articlesList[index].created_date
+        articlesStore.currentArticle.category = articlesStore.articlesList[index].category
+        articlesStore.currentArticle.subcategory = articlesStore.articlesList[index].subcategory
+        articlesStore.currentArticle.tags = articlesStore.articlesList[index].tags
+    })
+}
+
+// 修改指定文章
+async function reviseArticle(toBeRevisedArticle) {
+    console.log('articlesStore.currentIndex', articlesStore.currentIndex)
+
+    await request.post('/revise_article/', toBeRevisedArticle).then(response => {
+        console.log('@@reviseArticle')
+        console.log(response)
+        articlesStore.articlesList[articlesStore.currentIndex].title = response.revisedArticle_data.title
+        articlesStore.articlesList[articlesStore.currentIndex].subtitle = response.revisedArticle_data.subtitle
+        articlesStore.articlesList[articlesStore.currentIndex].is_display = response.revisedArticle_data.is_display
+        articlesStore.articlesList[articlesStore.currentIndex].updated_date = response.revisedArticle_data.updated_date.slice(0, 10)
+        articlesStore.articlesList[articlesStore.currentIndex].created_date = response.revisedArticle_data.created_date.slice(0, 10)
+        articlesStore.articlesList[articlesStore.currentIndex].subcategory = response.revisedArticle_data.subcategory
+        articlesStore.articlesList[articlesStore.currentIndex].category = response.revisedArticle_data.category
+        articlesStore.articlesList[articlesStore.currentIndex].tags = response.revisedArticle_data.tags
+
+        articlesStore.currentArticle.article_id = articlesStore.articlesList[articlesStore.currentIndex].article_id
+        articlesStore.currentArticle.title = response.revisedArticle_data.title
+        articlesStore.currentArticle.subtitle = response.revisedArticle_data.subtitle
+        articlesStore.currentArticle.is_display = response.revisedArticle_data.is_display
+        articlesStore.currentArticle.content_text = response.revisedArticle_data.content_text
+        articlesStore.currentArticle.content_html = response.revisedArticle_data.content_html
+        articlesStore.currentArticle.read_count = articlesStore.articlesList[articlesStore.currentIndex].read_count
+        articlesStore.currentArticle.comment_count = articlesStore.articlesList[articlesStore.currentIndex].comment_count
+        articlesStore.currentArticle.like_count = articlesStore.articlesList[articlesStore.currentIndex].like_count
+        articlesStore.currentArticle.reprinted_count = articlesStore.articlesList[articlesStore.currentIndex].reprinted_count
+        articlesStore.currentArticle.updated_date = response.revisedArticle_data.updated_date.slice(0, 10)
+        articlesStore.currentArticle.created_date = response.revisedArticle_data.created_date.slice(0, 10)
+        articlesStore.currentArticle.category = response.revisedArticle_data.category
+        articlesStore.currentArticle.subcategory = response.revisedArticle_data.subcategory
+        articlesStore.currentArticle.tags = response.revisedArticle_data.tags
+
+    })
+}
+
+export {getArticlesList, getAllCategory, getAllTag, createArticle, deleteArticle, fetchArticle, reviseArticle}
