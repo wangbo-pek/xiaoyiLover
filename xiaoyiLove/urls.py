@@ -24,7 +24,10 @@ urlpatterns = [
     # 获取指定文章
     path('fetch_article/<int:articleId>/', views.fetchArticle),
 
-    #
+    # 修改文章
     path('revise_article/', views.reviseArticle),
+
+    # 筛选文章
+    path('filter_article/', views.filterArticle),
 
 ]

@@ -110,7 +110,7 @@ def createArticle(request):
         content_html=data['content_html'],
     )
 
-    subCategoryObject = models.Sub_Category.objects.filter(sub_category_name=data['levelSecondCategory']).first()
+    subCategoryObject = models.Sub_Category.objects.filter(sub_category_name=data['subcategory']).first()
 
     # 添加文章：Article
     newArticle = models.Article.objects.create(
@@ -119,7 +119,7 @@ def createArticle(request):
         is_display=data['is_display'],
         updated_date=datetime.datetime.now(),
         article_info_id=newArticleInfo.article_info_id,
-        sub_category=subCategoryObject
+        sub_category_id=subCategoryObject.sub_category_id
     )
 
     # 设置文章和标签的关系
@@ -213,8 +213,6 @@ def reviseArticle(request):
         content_html=toBeReviseArticleData['content_html']
     )
 
-
-
     # 判断修改的文章中是否有标签
     if 'selectedTag' in toBeReviseArticleData:
         # 将修改的文章与标签的关系删除
@@ -261,5 +259,55 @@ def reviseArticle(request):
         'message': f'文章{revisedArticleObject.title}修改成功'
     }
 
+    return JsonResponse(response)
+    # return HttpResponse('1')
+
+
+def filterArticle(request):
+    response = {
+        'articlesList_data': []
+    }
+    filterCondition = dict(request.GET)
+    print(filterCondition)
+
+    # 情况1：subcategorySelected有值，忽略categorySelected
+    if 'subcategorySelected' in filterCondition:
+        print('情况1：subcategorySelected有值，忽略categorySelected')
+        subcategory = models.Sub_Category.objects.filter(
+            sub_category_name=filterCondition['subcategorySelected'][0]).first()
+        articles = models.Article.objects.filter(sub_category=subcategory)
+
+        # 情况1.1 tagSelected有值
+
+
+        # 情况1.1 tagSelected为空
+
+        for article in articles:
+            currentArticle = {
+                'article_id': article.article_id,
+                'title': article.title,
+                'subtitle': article.subtitle,
+                'is_display': article.is_display,
+                'updated_date': article.updated_date,
+                'created_date': article.created_date,
+                'subcategory': article.sub_category.sub_category_name,
+                'category': article.sub_category.category.category_name,
+                'tags': []
+            }
+            for tag in article.tag.all():
+                currentArticle['tags'].append(tag.tag_name)
+            response['articlesList_data'].append(currentArticle)
+
+    # 情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章
+    if 'subcategorySelected' not in filterCondition and 'categorySelected' in filterCondition:
+        print('情况2：subcategorySelected为空，查看categorySelected的值(非All)，筛选1级分类所有的2级分类的文章')
+
+    # 情况3subcategorySelected和categorySelected都为空，不对分类进行筛选
+    if 'subcategorySelected' not in filterCondition and 'categorySelected' not in filterCondition:
+        print('情况3subcategorySelected和categorySelected都为空，不对分类进行筛选')
+
+    response['code'] = 1
+    response['message'] = '获取文章列表成功'
+    print(response)
     return JsonResponse(response)
     # return HttpResponse('1')

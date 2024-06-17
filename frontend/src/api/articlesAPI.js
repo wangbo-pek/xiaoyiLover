@@ -135,4 +135,22 @@ async function reviseArticle(toBeRevisedArticle) {
     })
 }
 
-export {getArticlesList, getAllCategory, getAllTag, createArticle, deleteArticle, fetchArticle, reviseArticle}
+// 筛选文章
+async function filterArticles(filterCondition) {
+    await request.get('/filter_article/', {params: filterCondition}).then(response => {
+        console.log('@@filterArticle')
+        console.log(response)
+
+    })
+}
+
+export {
+    getArticlesList,
+    getAllCategory,
+    getAllTag,
+    createArticle,
+    deleteArticle,
+    fetchArticle,
+    reviseArticle,
+    filterArticles
+}

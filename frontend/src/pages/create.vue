@@ -27,8 +27,8 @@ let newArticle = reactive({
 })
 
 // category、subcategory的处理
-function resetSelectedSecondCategory() {
-    newArticle.levelSecondCategory = ''
+function resetSubcategory() {
+    newArticle.subcategory = ''
 }
 
 // tag的处理
@@ -120,7 +120,7 @@ function create() {
                     label="category"
                     color="teal-5"
                     outlined
-                    @update:model-value="resetSelectedSecondCategory"
+                    @update:model-value="resetSubcategory"
                     dense
                 ></q-select>
             </div>
