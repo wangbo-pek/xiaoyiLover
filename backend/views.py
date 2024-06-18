@@ -1,5 +1,7 @@
 import json
 import datetime
+
+import requests
 from django.shortcuts import render, redirect, HttpResponse
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
@@ -17,8 +19,22 @@ def getToken(request):
     return JsonResponse(response)
 
 
+def fetchWeather(request):
+    url = 'http://apis.juhe.cn/simpleWeather/query?city=北京&key=e3c4ab6ab691dbcc228a3d3b204bac75'
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        # 请求成功
+        print('创建成功，返回的数据:', response.json())
+    else:
+        # 请求失败
+        print('请求失败，状态码:', response.status_code)
+
+    return JsonResponse(response.json())
+
+
 # 获取所有文章列表
-def getArticleList(request):
+def getArticlesList(request):
     response = {
         'articlesList_data': []
     }
@@ -33,7 +49,7 @@ def getArticleList(request):
             'updated_date': article.updated_date,
             'created_date': article.created_date,
             'subcategory': article.sub_category.sub_category_name,
-            'category': article.sub_category.category.category_name,
+            'category': article.category.category_name,
             'tags': []
         }
         for tag in article.tag.all():
@@ -41,6 +57,109 @@ def getArticleList(request):
         response['articlesList_data'].append(currentArticle)
     response['code'] = 1
     response['message'] = '获取文章列表成功'
+    return JsonResponse(response)
+    # return HttpResponse('1')
+
+
+# 获取首页最新文章5篇
+def getHomeArticlesList(request):
+    response = {
+        'popularityArticlesList': [],
+        'codingLatestArticlesList': [],
+        'productLatestArticlesList': [],
+        'englishLatestArticlesList': [],
+        'homeLatestMessagesList': []
+    }
+
+    # 获取首页热度前5文章列表
+    popularityArticlesList = models.Article.objects.all().order_by('-article_info__like_count').order_by(
+        '-article_info__read_count')[:5]
+    for article in popularityArticlesList:
+        currentArticle = {
+            'article_id': article.article_id,
+            'title': article.title,
+            'subtitle': article.subtitle,
+            'is_display': article.is_display,
+            'updated_date': article.updated_date,
+            'created_date': article.created_date,
+            'subcategory': article.sub_category.sub_category_name,
+            'category': article.category.category_name,
+            'tags': []
+        }
+        for tag in article.tag.all():
+            currentArticle['tags'].append(tag.tag_name)
+        response['popularityArticlesList'].append(currentArticle)
+
+    # 获取Coding分类下最新3篇文章列表
+    codingObj = models.Category.objects.filter(category_name='Coding').first()
+    codingArticles = models.Article.objects.filter(category=codingObj).order_by('-updated_date')[:3]
+    for article in codingArticles:
+        currentArticle = {
+            'article_id': article.article_id,
+            'title': article.title,
+            'subtitle': article.subtitle,
+            'is_display': article.is_display,
+            'updated_date': article.updated_date,
+            'created_date': article.created_date,
+            'subcategory': article.sub_category.sub_category_name,
+            'category': article.category.category_name,
+            'tags': []
+        }
+        for tag in article.tag.all():
+            currentArticle['tags'].append(tag.tag_name)
+        response['codingLatestArticlesList'].append(currentArticle)
+
+    # 获取Product分类下最新3篇文章列表
+    productObj = models.Category.objects.filter(category_name='Product').first()
+    productArticles = models.Article.objects.filter(category=productObj).order_by('-updated_date')[:3]
+    for article in productArticles:
+        currentArticle = {
+            'article_id': article.article_id,
+            'title': article.title,
+            'subtitle': article.subtitle,
+            'is_display': article.is_display,
+            'updated_date': article.updated_date,
+            'created_date': article.created_date,
+            'subcategory': article.sub_category.sub_category_name,
+            'category': article.category.category_name,
+            'tags': []
+        }
+        for tag in article.tag.all():
+            currentArticle['tags'].append(tag.tag_name)
+        response['productLatestArticlesList'].append(currentArticle)
+
+    # 获取English分类下最新3篇文章列表
+    englishObj = models.Category.objects.filter(category_name='English').first()
+    englishArticles = models.Article.objects.filter(category=englishObj).order_by('-updated_date')[:3]
+    for article in englishArticles:
+        currentArticle = {
+            'article_id': article.article_id,
+            'title': article.title,
+            'subtitle': article.subtitle,
+            'is_display': article.is_display,
+            'updated_date': article.updated_date,
+            'created_date': article.created_date,
+            'subcategory': article.sub_category.sub_category_name,
+            'category': article.category.category_name,
+            'tags': []
+        }
+        for tag in article.tag.all():
+            currentArticle['tags'].append(tag.tag_name)
+        response['englishLatestArticlesList'].append(currentArticle)
+
+    # 获取最新5条留言
+    messagesObj = models.Message.objects.all().order_by('-created_date')[:5]
+    for message in messagesObj:
+        currentMessage = {
+            'message_id': message.message_id,
+            'message_content': message.message_content,
+            'created_date': message.created_date,
+            'guest_name': message.guest.name
+        }
+        response['homeLatestMessagesList'].append(currentMessage)
+
+    response['code'] = 1
+    response['message'] = '获取首页文章成功'
     return JsonResponse(response)
     # return HttpResponse('1')
 
@@ -53,8 +172,6 @@ def getAllCategory(request):
     }
 
     allCategory = models.Category.objects.all()
-    print(allCategory[0].category_name)
-    print(allCategory[0].sub_category_set.all()[0].sub_category_name)
 
     for category in allCategory:
         response['category_data'].append(category.category_name)
@@ -111,7 +228,7 @@ def createArticle(request):
     )
 
     subCategoryObject = models.Sub_Category.objects.filter(sub_category_name=data['subcategory']).first()
-
+    categoryObject = models.Category.objects.filter(category_name=data['category']).first()
     # 添加文章：Article
     newArticle = models.Article.objects.create(
         title=data['title'],
@@ -119,6 +236,7 @@ def createArticle(request):
         is_display=data['is_display'],
         updated_date=datetime.datetime.now(),
         article_info_id=newArticleInfo.article_info_id,
+        category_id=categoryObject.category_id,
         sub_category_id=subCategoryObject.sub_category_id
     )
 
@@ -131,10 +249,16 @@ def createArticle(request):
         'title': newArticle.title,
         'subtitle': newArticle.subtitle,
         'is_display': newArticle.is_display,
+        'content_text': newArticle.article_info.content_text,
+        'content_html': newArticle.article_info.content_html,
+        'read_count': newArticle.article_info.read_count,
+        'comment_count': newArticle.article_info.comment_count,
+        'like_count': newArticle.article_info.like_count,
+        'reprinted_count': newArticle.article_info.reprinted_count,
         'updated_date': newArticle.updated_date,
         'created_date': newArticle.created_date,
         'subcategory': newArticle.sub_category.sub_category_name,
-        'category': newArticle.sub_category.category.category_name,
+        'category': newArticle.category.category_name,
         'tags': []
     }
 
@@ -149,6 +273,7 @@ def createArticle(request):
     return JsonResponse(response)
 
 
+# 删除文章
 def deleteArticle(request, articleId):
     # 清除文章与标签的对应关系
     toBeDeleteArticle = models.Article.objects.filter(article_id=articleId)[0]
@@ -169,6 +294,7 @@ def deleteArticle(request, articleId):
     return JsonResponse(response)
 
 
+# 获取指定文章
 def fetchArticle(request, articleId):
     response = {}
     articleObject = models.Article.objects.filter(article_id=articleId).first()
@@ -186,6 +312,7 @@ def fetchArticle(request, articleId):
     # return HttpResponse('1')
 
 
+# 修改文章
 def reviseArticle(request):
     toBeReviseArticleData = json.loads(request.body)
     print(toBeReviseArticleData)
@@ -201,11 +328,18 @@ def reviseArticle(request):
 
     # 获取到已经修改后文章的model对象
     revisedArticleObject = models.Article.objects.filter(article_id=toBeReviseArticleData['article_id'])[0]
+
     # 获取到修改后文章的sub_category的model对象
     subcategoryObject = models.Sub_Category.objects.filter(
         sub_category_name=toBeReviseArticleData['subcategory']).first()
     # 修改sub_category
     revisedArticleObject.sub_category_id = subcategoryObject.sub_category_id
+
+    # 获取到修改后文章的category的model对象
+    categoryObject = models.Category.objects.filter(
+        category_name=toBeReviseArticleData['category']).first()
+    # 修改category
+    revisedArticleObject.category_id = categoryObject.category_id
 
     # 修改文章的text和html
     models.Article_Info.objects.filter(article_info_id=revisedArticleObject.article_info_id).update(
@@ -235,6 +369,9 @@ def reviseArticle(request):
 
     revisedArticleObject.tag.add(*tagsIdList)
 
+    # 保存，数据库更新
+    revisedArticleObject.save()
+
     # 将编辑修改后的文章返回给前端
     revisedArticle = {
         'article_id': revisedArticleObject.article_id,
@@ -244,7 +381,7 @@ def reviseArticle(request):
         'updated_date': revisedArticleObject.updated_date,
         'created_date': revisedArticleObject.created_date,
         'subcategory': revisedArticleObject.sub_category.sub_category_name,
-        'category': revisedArticleObject.sub_category.category.category_name,
+        'category': revisedArticleObject.category.category_name,
         'content_text': revisedArticleObject.article_info.content_text,
         'content_html': revisedArticleObject.article_info.content_html,
         'tags': []
@@ -263,6 +400,7 @@ def reviseArticle(request):
     # return HttpResponse('1')
 
 
+# 筛选文章
 def filterArticle(request):
     response = {
         'articlesList_data': []
@@ -281,7 +419,6 @@ def filterArticle(request):
         if 'tagSelected' in filterCondition:
             tagObj = models.Tag.objects.filter(tag_name=filterCondition['tagSelected'][0]).first()
             articles = articles.filter(tag=tagObj.tag_id)
-            print(articles)
             for article in articles:
                 currentArticle = {
                     'article_id': article.article_id,
@@ -316,60 +453,49 @@ def filterArticle(request):
                     currentArticle['tags'].append(tag.tag_name)
                 response['articlesList_data'].append(currentArticle)
 
-    # 情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章
+    # 情况2：subcategorySelected为空，categorySelected有值，筛选1级分类所有的2级分类的文章
     if 'subcategorySelected' not in filterCondition and 'categorySelected' in filterCondition:
         print('情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章')
         categoryObj = models.Category.objects.filter(category_name=filterCondition['categorySelected'][0]).first()
-        subcategoryQS = categoryObj.sub_category_set.all()
-        articlesQS = []
-        for subcategory in subcategoryQS:
-            qsObj = models.Article.objects.filter(sub_category=subcategory)
-            if qsObj:
-                articlesQS.append(qsObj)
+        articles = models.Article.objects.filter(category=categoryObj)
 
         # 情况2.1 tagSelected有值
         if 'tagSelected' in filterCondition:
             tagObj = models.Tag.objects.filter(tag_name=filterCondition['tagSelected'][0]).first()
-            for articles in articlesQS:
-                print(f'articles = f{articles}')
-                articles = articles.filter(tag=tagObj.tag_id)
-                for article in articles:
-                    print(f'article = f{article}')
-                    currentArticle = {
-                        'article_id': article.article_id,
-                        'title': article.title,
-                        'subtitle': article.subtitle,
-                        'is_display': article.is_display,
-                        'updated_date': article.updated_date,
-                        'created_date': article.created_date,
-                        'subcategory': article.sub_category.sub_category_name,
-                        'category': article.sub_category.category.category_name,
-                        'tags': []
-                    }
-                    for tag in article.tag.all():
-                        currentArticle['tags'].append(tag.tag_name)
-                    response['articlesList_data'].append(currentArticle)
+            articles = articles.filter(tag=tagObj.tag_id)
+            for article in articles:
+                currentArticle = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'subtitle': article.subtitle,
+                    'is_display': article.is_display,
+                    'updated_date': article.updated_date,
+                    'created_date': article.created_date,
+                    'subcategory': article.sub_category.sub_category_name,
+                    'category': article.sub_category.category.category_name,
+                    'tags': []
+                }
+                for tag in article.tag.all():
+                    currentArticle['tags'].append(tag.tag_name)
+                response['articlesList_data'].append(currentArticle)
 
         # 情况2.2 tagSelected为空
-        if 'tagSelected' not in filterCondition:
-            for articles in articlesQS:
-                print(f'articles = f{articles}')
-                for article in articles:
-                    print(f'article = f{article}')
-                    currentArticle = {
-                        'article_id': article.article_id,
-                        'title': article.title,
-                        'subtitle': article.subtitle,
-                        'is_display': article.is_display,
-                        'updated_date': article.updated_date,
-                        'created_date': article.created_date,
-                        'subcategory': article.sub_category.sub_category_name,
-                        'category': article.sub_category.category.category_name,
-                        'tags': []
-                    }
-                    for tag in article.tag.all():
-                        currentArticle['tags'].append(tag.tag_name)
-                    response['articlesList_data'].append(currentArticle)
+        elif 'tagSelected' not in filterCondition:
+            for article in articles:
+                currentArticle = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'subtitle': article.subtitle,
+                    'is_display': article.is_display,
+                    'updated_date': article.updated_date,
+                    'created_date': article.created_date,
+                    'subcategory': article.sub_category.sub_category_name,
+                    'category': article.sub_category.category.category_name,
+                    'tags': []
+                }
+                for tag in article.tag.all():
+                    currentArticle['tags'].append(tag.tag_name)
+                response['articlesList_data'].append(currentArticle)
 
     # 情况3subcategorySelected和categorySelected都为空，不对分类进行筛选，只筛选标签
     if 'subcategorySelected' not in filterCondition and 'categorySelected' not in filterCondition:

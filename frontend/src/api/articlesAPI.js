@@ -6,7 +6,7 @@ let articlesStore = useArticlesStore(pinia)
 
 // 获取所有文章列表信息
 async function getArticlesList() {
-    await request.get('get_article_list').then(response => {
+    await request.get('/get_articles_list/').then(response => {
         articlesStore.articlesList = []
         console.log('@@getArticlesList')
         console.log(response.articlesList_data)
@@ -62,6 +62,22 @@ async function createArticle(newArticle) {
             tags: response.newArticle_data.tags
         }
         articlesStore.articlesList.push(newArticle)
+
+        articlesStore.currentArticle.article_id = response.newArticle_data.article_id
+        articlesStore.currentArticle.title = response.newArticle_data.title
+        articlesStore.currentArticle.subtitle = response.newArticle_data.subtitle
+        articlesStore.currentArticle.is_display = response.newArticle_data.is_display
+        articlesStore.currentArticle.content_text = response.newArticle_data.content_text
+        articlesStore.currentArticle.content_html = response.newArticle_data.content_html
+        articlesStore.currentArticle.read_count = response.newArticle_data.read_count
+        articlesStore.currentArticle.comment_count = response.newArticle_data.comment_count
+        articlesStore.currentArticle.like_count = response.newArticle_data.like_count
+        articlesStore.currentArticle.reprinted_count = response.newArticle_data.reprinted_count
+        articlesStore.currentArticle.updated_date = response.newArticle_data.updated_date.slice(0, 10)
+        articlesStore.currentArticle.created_date = response.newArticle_data.created_date.slice(0, 10)
+        articlesStore.currentArticle.category = response.newArticle_data.category
+        articlesStore.currentArticle.subcategory = response.newArticle_data.subcategory
+        articlesStore.currentArticle.tags = response.newArticle_data.tags
     })
 }
 
@@ -102,7 +118,6 @@ async function fetchArticle(articleId, index) {
 // 修改指定文章
 async function reviseArticle(toBeRevisedArticle) {
     console.log('articlesStore.currentIndex', articlesStore.currentIndex)
-
     await request.post('/revise_article/', toBeRevisedArticle).then(response => {
         console.log('@@reviseArticle')
         console.log(response)
@@ -130,7 +145,6 @@ async function reviseArticle(toBeRevisedArticle) {
         articlesStore.currentArticle.category = response.revisedArticle_data.category
         articlesStore.currentArticle.subcategory = response.revisedArticle_data.subcategory
         articlesStore.currentArticle.tags = response.revisedArticle_data.tags
-
     })
 }
 
@@ -157,6 +171,88 @@ async function filterArticles(filterCondition) {
     })
 }
 
+// 获取首页文章和留言
+async function getHomeArticlesList() {
+    await request.get('/get_home_articles_list/').then(response => {
+        articlesStore.homePopularityArticlesList = []
+        articlesStore.homeCodingLatestArticlesList = []
+        articlesStore.homeProductLatestArticlesList = []
+        articlesStore.homeEnglishLatestArticlesList = []
+        articlesStore.homeLatestMessagesList = []
+        console.log('@@getHomeArticlesList')
+        console.log(response)
+        response.popularityArticlesList.forEach(value => {
+            let item = {
+                article_id: value.article_id,
+                title: value.title,
+                subtitle: value.subtitle,
+                is_display: value.is_display,
+                updated_date: value.updated_date.slice(0, 10),
+                created_date: value.created_date.slice(0, 10),
+                subcategory: value.subcategory,
+                category: value.category,
+                tags: value.tags
+            }
+            articlesStore.homePopularityArticlesList.push(item)
+        })
+
+        response.codingLatestArticlesList.forEach(value => {
+            let item = {
+                article_id: value.article_id,
+                title: value.title,
+                subtitle: value.subtitle,
+                is_display: value.is_display,
+                updated_date: value.updated_date.slice(0, 10),
+                created_date: value.created_date.slice(0, 10),
+                subcategory: value.subcategory,
+                category: value.category,
+                tags: value.tags
+            }
+            articlesStore.homeCodingLatestArticlesList.push(item)
+        })
+
+        response.productLatestArticlesList.forEach(value => {
+            let item = {
+                article_id: value.article_id,
+                title: value.title,
+                subtitle: value.subtitle,
+                is_display: value.is_display,
+                updated_date: value.updated_date.slice(0, 10),
+                created_date: value.created_date.slice(0, 10),
+                subcategory: value.subcategory,
+                category: value.category,
+                tags: value.tags
+            }
+            articlesStore.homeProductLatestArticlesList.push(item)
+        })
+
+        response.englishLatestArticlesList.forEach(value => {
+            let item = {
+                article_id: value.article_id,
+                title: value.title,
+                subtitle: value.subtitle,
+                is_display: value.is_display,
+                updated_date: value.updated_date.slice(0, 10),
+                created_date: value.created_date.slice(0, 10),
+                subcategory: value.subcategory,
+                category: value.category,
+                tags: value.tags
+            }
+            articlesStore.homeEnglishLatestArticlesList.push(item)
+        })
+
+        response.homeLatestMessagesList.forEach(value => {
+            let item = {
+                message_id: value.message_id,
+                message_content: value.message_content,
+                created_date: value.created_date,
+                guest_name: value.guest_name
+            }
+            articlesStore.homeLatestMessagesList.push(item)
+        })
+    })
+}
+
 export {
     getArticlesList,
     getAllCategory,
@@ -165,5 +261,6 @@ export {
     deleteArticle,
     fetchArticle,
     reviseArticle,
-    filterArticles
+    filterArticles,
+    getHomeArticlesList,
 }

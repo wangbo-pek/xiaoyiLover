@@ -12,6 +12,8 @@ class Article(models.Model):
 
     # 文章 1:1 文章信息
     article_info = models.OneToOneField(to='Article_Info', on_delete=models.CASCADE)
+    # 1级分类 1:n 文章
+    category = models.ForeignKey(to='Category', on_delete=models.CASCADE)
     # 2级分类 1:n 文章
     sub_category = models.ForeignKey(to='Sub_Category', on_delete=models.CASCADE)
     # 文章 n:n 标签
@@ -51,7 +53,7 @@ class Diary(models.Model):
         return f'{self.diary_id}|{self.title}'
 
 
-# 文章分类
+# 文章1级分类
 class Category(models.Model):
     category_id = models.AutoField(primary_key=True)
     category_name = models.CharField(max_length=64)
@@ -101,7 +103,7 @@ class Guest(models.Model):
 # 留言
 class Message(models.Model):
     message_id = models.AutoField(primary_key=True)
-    content = models.CharField(max_length=4056)
+    message_content = models.CharField(max_length=4056)
     created_date = models.DateTimeField(auto_now_add=True)
     is_display = models.CharField(max_length=2, choices=((0, 'hidden'), (1, 'display')))
     # 访客 1:n 留言
@@ -111,7 +113,7 @@ class Message(models.Model):
 # 评论
 class Comment(models.Model):
     comment_id = models.AutoField(primary_key=True)
-    content = models.CharField(max_length=4056)
+    comment_content = models.CharField(max_length=4056)
     created_date = models.DateTimeField(auto_now_add=True)
     is_display = models.CharField(max_length=2, choices=((0, 'hidden'), (1, 'display')))
     # 访客 1:n 评论

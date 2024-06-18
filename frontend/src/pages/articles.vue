@@ -8,10 +8,6 @@ defineOptions({
     name: 'Articles'
 })
 
-onMounted(() => {
-    getArticlesList()
-})
-
 </script>
 
 <template>
@@ -44,7 +40,6 @@ onMounted(() => {
         width: 75%;
         height: 100vh;
     }
-
 }
 
 

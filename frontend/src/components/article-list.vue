@@ -4,8 +4,8 @@ defineOptions({
 })
 
 import useArticlesStore from "../store/articles.js";
-import {deleteArticle, fetchArticle} from '@/api/articlesAPI.js'
-import {reactive} from "vue";
+import {deleteArticle, fetchArticle, getArticlesList} from '@/api/articlesAPI.js'
+import {onMounted, reactive} from "vue";
 import {useRouter} from "vue-router";
 
 let articlesStore = useArticlesStore()
@@ -38,12 +38,16 @@ function previewSpecifiedArticle(articleId, index) {
 }
 
 // 编辑指定文章
-function reviseSpecifiedArticle(articleId, index) {
-    fetchArticle(articleId, index)
-    $router.push({
+async function reviseSpecifiedArticle(articleId, index) {
+    await fetchArticle(articleId, index)
+    await $router.push({
         name:'revise'
     })
 }
+
+onMounted(()=>{
+    getArticlesList()
+})
 
 </script>
 

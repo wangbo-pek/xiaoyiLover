@@ -2,7 +2,7 @@
 import {onMounted} from "vue";
 import request from "@/utils/request.js";
 import {getAllCategory, getAllTag} from '@/api/articlesAPI.js'
-
+import {fetchWeatherInfo} from "@/api/extraInfoAPI.js";
 
 function getToken() {
     request.get('/get_token/').then((response) => {
@@ -16,6 +16,7 @@ onMounted(()=>{
     getToken()
     getAllCategory()
     getAllTag()
+    fetchWeatherInfo()
 })
 </script>
 

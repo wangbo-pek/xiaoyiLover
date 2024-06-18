@@ -8,8 +8,13 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='index.html')),
     path('get_token/', views.getToken),
 
+    # 从api获取相关信息
+    path('api/weather/', views.fetchWeather),
+
     # 获取文章列表
-    path('get_article_list/', views.getArticleList),
+    path('get_articles_list/', views.getArticlesList),
+    # 获取首页文章篇
+    path('get_home_articles_list/', views.getHomeArticlesList),
 
     # 获取所有分类、标签
     path('get_all_category/', views.getAllCategory),

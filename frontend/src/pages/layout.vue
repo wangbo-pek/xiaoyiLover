@@ -1,11 +1,14 @@
 <script setup>
-import Title from "@/components/header_title.vue";
-import Menu from "@/components/header-menu.vue";
-import Action from "@/components/header-action.vue";
 
 defineOptions({
     name: 'Layout'
 })
+
+import Title from "@/components/header_title.vue";
+import Menu from "@/components/header-menu.vue";
+import Action from "@/components/header-action.vue";
+import Sidebar from "@/components/sidebar.vue";
+
 </script>
 
 <template>
@@ -34,7 +37,9 @@ defineOptions({
                 <div class="col-9 content">
                     <router-view></router-view>
                 </div>
-                <div class="col-3 sidebar">sidebar</div>
+                <div class="col-3 sidebar">
+                    <Sidebar></Sidebar>
+                </div>
             </div>
         </div>
 
@@ -72,7 +77,7 @@ defineOptions({
             top: 0;
             left: 75%;
             z-index: 99;
-           background-image: linear-gradient(to right, rgba(102, 235, 195, 0.73), rgba(104, 240, 190, 0.7), rgba(106, 245, 185, 0.67));
+            background-image: linear-gradient(to right, rgba(102, 235, 195, 0.73), rgba(104, 240, 190, 0.7), rgba(106, 245, 185, 0.67));
         }
     }
 
@@ -97,10 +102,7 @@ defineOptions({
             right: 0;
             background-color: #a57fb2;
         }
-
-
     }
-
 
     .footer {
         height: $footbar-high;

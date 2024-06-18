@@ -8,7 +8,7 @@ import {MdEditor} from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import useArticlesStore from "@/store/articles.js";
 import {useRouter} from "vue-router";
-import {createArticle, getArticlesList} from '@/api/articlesAPI.js'
+import {createArticle} from '@/api/articlesAPI.js'
 import showdown from 'showdown'
 
 const $router = useRouter()
@@ -66,12 +66,13 @@ function createTag(val, done) {
 
 
 // 保存新创建的文章
-function create() {
+async function create() {
     const converter = new showdown.Converter()
     newArticle.content_html = converter.makeHtml(newArticle.content_text)
-    createArticle(newArticle)
-    $router.push({
-        name: 'articles'
+    await createArticle(newArticle)
+
+    await $router.push({
+        name: 'preview'
     })
 }
 

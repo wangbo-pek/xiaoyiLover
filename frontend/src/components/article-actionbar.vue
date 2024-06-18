@@ -166,7 +166,7 @@ watch(() => [articleFilter.categorySelected, articleFilter.subcategorySelected, 
     .category-selection {
         position: fixed;
         top: 95px;
-        left: 50px;
+        left: 100px;
         width: 250px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
     }
@@ -174,7 +174,7 @@ watch(() => [articleFilter.categorySelected, articleFilter.subcategorySelected, 
     .subcategory-selection {
         position: fixed;
         top: 95px;
-        left: 320px;
+        left: 370px;
         width: 250px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
     }
@@ -182,7 +182,7 @@ watch(() => [articleFilter.categorySelected, articleFilter.subcategorySelected, 
     .tag-selection {
         position: fixed;
         top: 95px;
-        left: 590px;
+        left: 640px;
         width: 250px;
         max-height: 300px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
@@ -190,16 +190,16 @@ watch(() => [articleFilter.categorySelected, articleFilter.subcategorySelected, 
 
     .reset-btn {
         position: fixed;
-        top: 100px;
-        left: 870px;
+        top: 102px;
+        left: 920px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
         color: #5c7370;
     }
 
     .create-btn {
         position: fixed;
-        top: 100px;
-        left: 940px;
+        top: 102px;
+        left: 990px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
         color: #5c7370;
     }

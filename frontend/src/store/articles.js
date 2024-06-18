@@ -34,9 +34,24 @@ let useArticlesStore = defineStore('useArticlesStore', {
             subcategoryObject:{},
 
             // 所有的文章标签
-            tagsList:[]
+            tagsList:[],
+
+            // 首页文章：最热5篇
+            homePopularityArticlesList:[],
+
+            // 首页文章：coding最新3篇
+            homeCodingLatestArticlesList:[],
+
+            // 首页文章：product最新3篇
+            homeProductLatestArticlesList:[],
+
+            // 首页文章：english最新3篇
+            homeEnglishLatestArticlesList:[],
+
+            // 首页留言：留言最新5条
+            homeLatestMessagesList:[],
         }
-    }
+    },
 })
 
 export default useArticlesStore
