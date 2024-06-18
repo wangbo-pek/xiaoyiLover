@@ -6,8 +6,8 @@ let articlesStore = useArticlesStore(pinia)
 
 // 获取所有文章列表信息
 async function getArticlesList() {
-    articlesStore.articlesList = []
     await request.get('get_article_list').then(response => {
+        articlesStore.articlesList = []
         console.log('@@getArticlesList')
         console.log(response.articlesList_data)
         response.articlesList_data.forEach(value => {
@@ -23,7 +23,6 @@ async function getArticlesList() {
                 tags: value.tags
             }
             articlesStore.articlesList.push(item)
-            console.log(articlesStore.articlesList)
         })
     })
 }
@@ -51,7 +50,7 @@ async function getAllTag() {
 async function createArticle(newArticle) {
     await request.post('/create_article/', newArticle).then(response => {
         console.log(response)
-        let newArticle = {
+        const newArticle = {
             article_id: response.newArticle_data.article_id,
             title: response.newArticle_data.title,
             subtitle: response.newArticle_data.subtitle,
@@ -138,9 +137,23 @@ async function reviseArticle(toBeRevisedArticle) {
 // 筛选文章
 async function filterArticles(filterCondition) {
     await request.get('/filter_article/', {params: filterCondition}).then(response => {
+        articlesStore.articlesList = []
         console.log('@@filterArticle')
         console.log(response)
-
+        response.articlesList_data.forEach(value => {
+            let item = {
+                article_id: value.article_id,
+                title: value.title,
+                subtitle: value.subtitle,
+                is_display: value.is_display,
+                updated_date: value.updated_date.slice(0, 10),
+                created_date: value.created_date.slice(0, 10),
+                subcategory: value.subcategory,
+                category: value.category,
+                tags: value.tags
+            }
+            articlesStore.articlesList.push(item)
+        })
     })
 }
 

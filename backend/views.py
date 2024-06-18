@@ -278,10 +278,105 @@ def filterArticle(request):
         articles = models.Article.objects.filter(sub_category=subcategory)
 
         # 情况1.1 tagSelected有值
+        if 'tagSelected' in filterCondition:
+            tagObj = models.Tag.objects.filter(tag_name=filterCondition['tagSelected'][0]).first()
+            articles = articles.filter(tag=tagObj.tag_id)
+            print(articles)
+            for article in articles:
+                currentArticle = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'subtitle': article.subtitle,
+                    'is_display': article.is_display,
+                    'updated_date': article.updated_date,
+                    'created_date': article.created_date,
+                    'subcategory': article.sub_category.sub_category_name,
+                    'category': article.sub_category.category.category_name,
+                    'tags': []
+                }
+                for tag in article.tag.all():
+                    currentArticle['tags'].append(tag.tag_name)
+                response['articlesList_data'].append(currentArticle)
+        # 情况1.2 tagSelected为空
+        elif 'tagSelected' not in articles:
+            print(articles)
+            for article in articles:
+                currentArticle = {
+                    'article_id': article.article_id,
+                    'title': article.title,
+                    'subtitle': article.subtitle,
+                    'is_display': article.is_display,
+                    'updated_date': article.updated_date,
+                    'created_date': article.created_date,
+                    'subcategory': article.sub_category.sub_category_name,
+                    'category': article.sub_category.category.category_name,
+                    'tags': []
+                }
+                for tag in article.tag.all():
+                    currentArticle['tags'].append(tag.tag_name)
+                response['articlesList_data'].append(currentArticle)
 
+    # 情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章
+    if 'subcategorySelected' not in filterCondition and 'categorySelected' in filterCondition:
+        print('情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章')
+        categoryObj = models.Category.objects.filter(category_name=filterCondition['categorySelected'][0]).first()
+        subcategoryQS = categoryObj.sub_category_set.all()
+        articlesQS = []
+        for subcategory in subcategoryQS:
+            qsObj = models.Article.objects.filter(sub_category=subcategory)
+            if qsObj:
+                articlesQS.append(qsObj)
 
-        # 情况1.1 tagSelected为空
+        # 情况2.1 tagSelected有值
+        if 'tagSelected' in filterCondition:
+            tagObj = models.Tag.objects.filter(tag_name=filterCondition['tagSelected'][0]).first()
+            for articles in articlesQS:
+                print(f'articles = f{articles}')
+                articles = articles.filter(tag=tagObj.tag_id)
+                for article in articles:
+                    print(f'article = f{article}')
+                    currentArticle = {
+                        'article_id': article.article_id,
+                        'title': article.title,
+                        'subtitle': article.subtitle,
+                        'is_display': article.is_display,
+                        'updated_date': article.updated_date,
+                        'created_date': article.created_date,
+                        'subcategory': article.sub_category.sub_category_name,
+                        'category': article.sub_category.category.category_name,
+                        'tags': []
+                    }
+                    for tag in article.tag.all():
+                        currentArticle['tags'].append(tag.tag_name)
+                    response['articlesList_data'].append(currentArticle)
 
+        # 情况2.2 tagSelected为空
+        if 'tagSelected' not in filterCondition:
+            for articles in articlesQS:
+                print(f'articles = f{articles}')
+                for article in articles:
+                    print(f'article = f{article}')
+                    currentArticle = {
+                        'article_id': article.article_id,
+                        'title': article.title,
+                        'subtitle': article.subtitle,
+                        'is_display': article.is_display,
+                        'updated_date': article.updated_date,
+                        'created_date': article.created_date,
+                        'subcategory': article.sub_category.sub_category_name,
+                        'category': article.sub_category.category.category_name,
+                        'tags': []
+                    }
+                    for tag in article.tag.all():
+                        currentArticle['tags'].append(tag.tag_name)
+                    response['articlesList_data'].append(currentArticle)
+
+    # 情况3subcategorySelected和categorySelected都为空，不对分类进行筛选，只筛选标签
+    if 'subcategorySelected' not in filterCondition and 'categorySelected' not in filterCondition:
+        print('情况3subcategorySelected和categorySelected都为空，不对分类进行筛选')
+        tagObj = models.Tag.objects.filter(tag_name=filterCondition['tagSelected'][0]).first()
+        articles = tagObj.article_set.all()
+        print(f'articles = f{articles}')
         for article in articles:
             currentArticle = {
                 'article_id': article.article_id,
@@ -298,16 +393,8 @@ def filterArticle(request):
                 currentArticle['tags'].append(tag.tag_name)
             response['articlesList_data'].append(currentArticle)
 
-    # 情况2：subcategorySelected为空，查看categorySelected的值，筛选1级分类所有的2级分类的文章
-    if 'subcategorySelected' not in filterCondition and 'categorySelected' in filterCondition:
-        print('情况2：subcategorySelected为空，查看categorySelected的值(非All)，筛选1级分类所有的2级分类的文章')
-
-    # 情况3subcategorySelected和categorySelected都为空，不对分类进行筛选
-    if 'subcategorySelected' not in filterCondition and 'categorySelected' not in filterCondition:
-        print('情况3subcategorySelected和categorySelected都为空，不对分类进行筛选')
-
     response['code'] = 1
-    response['message'] = '获取文章列表成功'
+    response['message'] = '筛选文章成功'
     print(response)
     return JsonResponse(response)
     # return HttpResponse('1')

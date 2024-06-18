@@ -5,8 +5,8 @@ defineOptions({
 })
 
 import useArticlesStore from "@/store/articles.js";
-import {reactive, onMounted, watch} from "vue";
-import {filterArticles} from '@/api/articlesAPI.js'
+import {reactive, watch} from "vue";
+import {filterArticles, getArticlesList} from '@/api/articlesAPI.js'
 
 let articlesStore = useArticlesStore()
 let articleFilter = reactive({
@@ -15,33 +15,39 @@ let articleFilter = reactive({
     tagSelected: null,
 })
 
-function resetSubcategory(){
-    articleFilter.subcategorySelected = null
-}
-
 // reset
 function resetSelectedFilter() {
     articleFilter.categorySelected = null
     articleFilter.subcategorySelected = null
     articleFilter.tagSelected = null
+    getArticlesList()
 }
 
-// filter
-function filter() {
+// 通过watch监视articleFilter的值，来实现filter
+watch(() => [articleFilter.categorySelected, articleFilter.subcategorySelected, articleFilter.tagSelected], (newValue, oldValue) => {
+    console.log(newValue)
+    console.log(oldValue)
+    if (newValue[0] === null && newValue[1] === null && newValue[2] === null) {
+        getArticlesList()
+        return
+    }
+
+    if (newValue[0] === null) {
+        articleFilter.subcategorySelected = null
+    }
+
     let filterConditions = {
         categorySelected: articleFilter.categorySelected,
         subcategorySelected: articleFilter.subcategorySelected,
         tagSelected: articleFilter.tagSelected
     }
     filterArticles(filterConditions)
-
-}
+})
 
 </script>
 
 <template>
     <div class="actionbar-container">
-
         <div class="category-selection">
             <q-select
                 class="category"
@@ -53,7 +59,7 @@ function filter() {
                 text-color="black"
                 dense
                 clearable
-                @update:model-value="resetSubcategory"
+                @update:model-value="articleFilter.subcategorySelected = null"
             ></q-select>
         </div>
 
@@ -127,27 +133,6 @@ function filter() {
             ></q-select>
         </div>
 
-        <div class="filter-btn">
-            <template
-                v-if="articleFilter.tagSelected||articleFilter.subcategorySelected||articleFilter.categorySelected">
-                <q-btn
-                    class="filter"
-                    size="10px"
-                    icon="filter_alt"
-                    @click="filter"
-                ></q-btn>
-            </template>
-            <template v-else>
-                <q-btn
-                    class="filter"
-                    size="10px"
-                    icon="filter_alt"
-                    @click="filter"
-                    disable
-                ></q-btn>
-            </template>
-        </div>
-
         <div class="reset-btn">
             <q-btn
                 class="reset"
@@ -203,7 +188,7 @@ function filter() {
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
     }
 
-    .filter-btn {
+    .reset-btn {
         position: fixed;
         top: 100px;
         left: 870px;
@@ -211,18 +196,10 @@ function filter() {
         color: #5c7370;
     }
 
-    .reset-btn {
-        position: fixed;
-        top: 100px;
-        left: 940px;
-        background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
-        color: #5c7370;
-    }
-
     .create-btn {
         position: fixed;
         top: 100px;
-        left: 1010px;
+        left: 940px;
         background-image: linear-gradient(to right, rgba(96, 204, 213, 0.9), rgba(92, 220, 210, 0.87), rgba(94, 225, 179, 0.84));
         color: #5c7370;
     }
