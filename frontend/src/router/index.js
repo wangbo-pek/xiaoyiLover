@@ -45,6 +45,24 @@ const router = createRouter({
                     },
                 },
                 {
+                    name: 'diary',
+                    path: '/diary',
+                    component: () => import('@/pages/diary.vue'),
+                    meta: {
+                        isShow: true,
+                        key: 'diary'
+                    },
+                },
+                {
+                    name: 'tags',
+                    path: '/tags',
+                    component: () => import('@/pages/tags.vue'),
+                    meta: {
+                        isShow: true,
+                        key: 'tags'
+                    },
+                },
+                {
                     name: 'about',
                     path: '/about',
                     component: () => import('@/pages/about.vue'),
@@ -110,4 +128,5 @@ const router = createRouter({
         }
     }
 })
+
 export default router

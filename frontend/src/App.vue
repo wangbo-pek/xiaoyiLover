@@ -3,6 +3,8 @@ import {onMounted} from "vue";
 import request from "@/utils/request.js";
 import {getAllCategory, getAllTag} from '@/api/articlesAPI.js'
 import {fetchWeatherInfo, fetchQuotes} from "@/api/extraInfoAPI.js";
+import {getDiaryList} from '@/api/diaryAPI.js'
+
 
 function getToken() {
     request.get('/get_token/').then((response) => {
@@ -18,6 +20,7 @@ onMounted(()=>{
     getAllTag()
     fetchWeatherInfo()
     fetchQuotes()
+    getDiaryList()
 })
 </script>
 

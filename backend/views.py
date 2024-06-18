@@ -563,3 +563,31 @@ def filterArticle(request):
     print(response)
     return JsonResponse(response)
     # return HttpResponse('1')
+
+
+# 获取日记列表
+def getDiaryList(request):
+    response = {
+        'diaryList_data': []
+    }
+
+    diaryList = models.Diary.objects.all()
+    for diary in diaryList:
+        currentDiary = {
+            'diary_id': diary.diary_id,
+            'title': diary.title,
+            'weather': diary.weather,
+            'temperature': diary.temperature,
+            'mood': diary.mood,
+            'cover': diary.cover,
+            'diary_text': diary.diary_text,
+            'diary_html': diary.diary_html,
+            'created_date': diary.created_date
+        }
+        response['diaryList_data'].append(currentDiary)
+
+    response['code'] = 1
+    response['message'] = '获取日记列表成功'
+    print(response)
+    return JsonResponse(response)
+    # return HttpResponse('1')

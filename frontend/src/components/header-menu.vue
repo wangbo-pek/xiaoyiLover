@@ -19,7 +19,7 @@ defineOptions({
             class="tags-btn"
             size="20px"
             label="Tags"
-            :to="{name:'home'}"
+            :to="{name:'tags'}"
         ></q-btn>
 
         <q-btn
@@ -27,7 +27,7 @@ defineOptions({
             class="diary-btn"
             size="20px"
             label="Diary"
-            :to="{name:'home'}"
+            :to="{name:'diary'}"
         ></q-btn>
 
         <q-btn

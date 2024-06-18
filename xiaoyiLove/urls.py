@@ -36,4 +36,7 @@ urlpatterns = [
     # 筛选文章
     path('filter_article/', views.filterArticle),
 
+    # 获取日记列表
+    path('get_diary_list/', views.getDiaryList)
+
 ]

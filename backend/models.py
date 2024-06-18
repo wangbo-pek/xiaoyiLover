@@ -42,7 +42,7 @@ class Diary(models.Model):
     diary_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=256)
     weather = models.CharField(max_length=64)
-    temperature = models.IntegerField
+    temperature = models.IntegerField(default=30)
     mood = models.CharField(max_length=32)
     cover = models.CharField(max_length=256)
     diary_text = models.TextField()
