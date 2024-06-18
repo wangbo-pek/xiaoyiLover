@@ -10,6 +10,7 @@ urlpatterns = [
 
     # 从api获取相关信息
     path('api/weather/', views.fetchWeather),
+    path('api/quotes/', views.fetchQuotes),
 
     # 获取文章列表
     path('get_articles_list/', views.getArticlesList),

@@ -24,13 +24,52 @@ def fetchWeather(request):
 
     response = requests.get(url)
     if response.status_code == 200:
-        # 请求成功
         print('创建成功，返回的数据:', response.json())
     else:
-        # 请求失败
         print('请求失败，状态码:', response.status_code)
 
     return JsonResponse(response.json())
+
+
+def fetchQuotes(request):
+    global responseResult
+    apiUrl = 'http://apis.juhe.cn/fapigx/mingyan/query'
+    apiKey = 'bd7262fa422b0aabab0e69fd73a9ddf4'
+
+    requestParams1 = {
+        'key': apiKey,
+        'num': 5,
+        'typeid': 16,
+    }
+
+    requestParams2 = {
+        'key': apiKey,
+        'num': 5,
+        'typeid': 21,
+    }
+
+    requestParams3 = {
+        'key': apiKey,
+        'num': 5,
+        'typeid': 41,
+    }
+
+    requestParams4 = {
+        'key': apiKey,
+        'num': 5,
+        'typeid': 38,
+    }
+
+    response = {
+        'quotes': []
+    }
+
+    response['quotes'].append(requests.get(apiUrl, params=requestParams1).json())
+    response['quotes'].append(requests.get(apiUrl, params=requestParams2).json())
+    response['quotes'].append(requests.get(apiUrl, params=requestParams3).json())
+    response['quotes'].append(requests.get(apiUrl, params=requestParams4).json())
+    print(response)
+    return JsonResponse(response)
 
 
 # 获取所有文章列表

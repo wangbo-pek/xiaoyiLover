@@ -100,7 +100,6 @@ import Sidebar from "@/components/sidebar.vue";
             position: fixed;
             top: $header-high;
             right: 0;
-            background-color: #a57fb2;
         }
     }
 
