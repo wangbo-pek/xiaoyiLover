@@ -1,8 +1,7 @@
 <script setup>
 import ArticleActionBar from "@/components/article-actionbar.vue";
 import ArticleList from "@/components/article-list.vue";
-import {getArticlesList} from "@/api/articlesAPI.js";
-import {onMounted} from "vue";
+
 
 defineOptions({
     name: 'Articles'
@@ -41,7 +40,4 @@ defineOptions({
         height: 100vh;
     }
 }
-
-
-
 </style>
